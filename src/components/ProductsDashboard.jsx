@@ -6,10 +6,11 @@ import "../App.css"
 import { Link, NavLink } from 'react-router-dom'
 export const Products = () => {
   const {data, isLoading, isError} = useSelector((state)=>({
-    data : state.data,
+    data : state.products,
     isLoading : state.isLoading,
     isError : state.isError
 }))
+// const data = useSelector((state)=>state.products[0])
   const [prod,setProd]= useState([])
   // const [check,setCheck] = useState('')
   // to get all products list on component mounts
@@ -23,31 +24,33 @@ export const Products = () => {
 
     axios("https://movie-fake-server.herokuapp.com/products")
     .then((res)=>{ dispatch(getProductsSuccess(res.data))
-                    setProd(res.data)})
+                 })
     .catch((err)=>dispatch(getProductsFailure(err)))
-
-  }, [dispatch]);
+  
+  }, []);
 
   //    sort by price
   const handleSort = (e) => {
     // dispach handle sort action to the store
-    // console.log(e.target.value)
+    
     dispatch(sortProducts(e.target.value))
   };
   return (
     <>
       <h2>Products</h2>
+      {isLoading && <h1>Loading...</h1>}
       <select onChange={handleSort}>
         <option>--sort by --</option>
         <option value="asc">low to high</option>
         <option value="desc">high to low</option>
       </select>
+      {/* {console.log("data",data)} */}
       <div className="products-list container ">
         {/* map throught th products  list and display the results */}
-        {data.map((prods)=>{ 
-          // console.log(prods);
+        {data[0]?.map((prods)=>{ 
+          
           return (<>
-           <Link className="c2" to= {`/single/${prods.id}`} >
+           < Link key={prods.id} className="c2" to= {`/single/${prods.id}`} >
            <div >
            <img src={prods.image}/>
            <div className="c3"><h5> {prods.brand}</h5>
